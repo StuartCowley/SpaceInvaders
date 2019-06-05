@@ -11,3 +11,7 @@ canvas {
     border: solid;
     background: black;
 }
+
+.thing {
+    width: 20px
+}
