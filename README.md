@@ -20,4 +20,3 @@ which will be included in the MVP initial release, which are for future developm
 - [@StuartCowley](https://github.com/StuartCowley)
 - [@ryan-farrell](https://github.com/ryan-farrell)
 - [@EllieJudge](https://github.come/EllieJudge)
-- 
