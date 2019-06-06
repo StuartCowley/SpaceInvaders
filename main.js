@@ -3,14 +3,14 @@ var ctx = background.getContext("2d");
 
 window.addEventListener("keydown", movePlayer, false);
 
-// Used to define initial offset off player and set boundaries, preventing player moving out of range
+// Used to define initial offset of player
 let deltaX = 0;
 let deltaY = 0;
+
+// Function to set boundaries, prevents elements from moving out of min and max range
 const keepElementInRange = (v, min, max) => {
   return Math.min(max, Math.max(min, v));
 };
-
-// console.log(keepPlayerInRange(00, 20, 100));
 
 function movePlayer(k) {
   switch (k.keyCode) {
@@ -76,27 +76,47 @@ function drawPlayer() {
 // Repeat until at alien hits a defined point (80% from top?)
 
 // Modified version of drawAlien function which accepts coordinates on each run
-// Initialize start coords
-// let topLeft = 20;
-// let bottomRight = 60;
-// const size = 40;
+// Initialize alien coord, size of alien, and level on the vertical axis
+let topLeft = 60;
+let level = 20;
+const size = 40;
 
-// function modDrawAlien() {
-//   ctx.clearRect(0, 0, background.width, 500);
-//   ctx.beginPath();
-//   ctx.moveTo(topLeft, topLeft);
-//   ctx.lineTo(topLeft, topLeft + size);
-//   ctx.lineTo(topLeft + size, topLeft + size);
-//   ctx.lineTo(topLeft + size, topLeft);
-//   ctx.closePath();
-//   ctx.fillStyle = "white";
-//   ctx.fill();
-//   topLeft += 40;
-// }
+function modDrawAlien() {
+  ctx.clearRect(0, 0, background.width, 500);
+  ctx.beginPath();
+  ctx.moveTo(topLeft, level);
+  ctx.lineTo(topLeft, level + size);
+  ctx.lineTo(topLeft + size, level + size);
+  ctx.lineTo(topLeft + size, level);
+  ctx.closePath();
+  ctx.fillStyle = "white";
+  ctx.fill();
+  topLeft += 40;
+}
 
-// setTimeout(modDrawAlien(), 10);
+// setInterval(modDrawAlien, 1000);
 
 // -------------------------------------------------------------------------
 
-// drawAlien();
-// drawPlayer();
+drawPlayer();
+
+// ------STU-SKETCHPAD------------------------------------------------------
+
+// function moveLevel() {
+//   if (keepElementInRange(level, 20, 200) < 200) {
+//     setInterval(modDrawAlien, 1000);
+//   } else {
+//     level += 40;
+//     setInterval(modDrawAlien, 1000);
+//   }
+// }
+
+// var interval = setInterval(function(){
+//     timesRun += 1;
+//     if(timesRun === 60){
+//         clearInterval(interval);
+//     }
+//     //do whatever here..
+// }, 2000);
+
+// moveLevel();
