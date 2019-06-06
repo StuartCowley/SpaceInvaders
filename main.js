@@ -6,12 +6,22 @@ window.addEventListener("keydown", movePlayer, false);
 // Used to define initial offset of player
 let deltaX = 0;
 let deltaY = 0;
+let deltaZ = 200;
+
+// Describes if a player bullet is already on screen
+let onScreen = false;
 
 // Function to set boundaries, prevents elements from moving out of min and max range
 const keepElementInRange = (v, min, max) => {
   return Math.min(max, Math.max(min, v));
 };
 
+// Fire player bullet
+const fire = () => {
+  drawBullet(5, 7);
+}
+
+// Key listener
 function movePlayer(k) {
   switch (k.keyCode) {
     case 37:
@@ -22,23 +32,22 @@ function movePlayer(k) {
       // right key pressed
       deltaX += 10;
       break;
+    case 32:
+      //space bar pressed
+      if (onScreen == false) {
+        onScreen = true;
+        let stopBullet = setInterval(fire, 200);
+        setTimeout(() => {
+          clearInterval(stopBullet);
+          onScreen = false;
+          deltaZ = 200;
+        }, 5000)
+      } else {}
   }
   k.preventDefault();
   drawPlayer();
 }
 
-// This is a square placeholder representing an alien element
-function drawAlien() {
-  ctx.clearRect(0, 0, background.width, 500);
-  ctx.beginPath();
-  ctx.moveTo(20 + deltaX, 20 + deltaY);
-  ctx.lineTo(20 + deltaX, 60 + deltaY);
-  ctx.lineTo(60 + deltaX, 60 + deltaY);
-  ctx.lineTo(60 + deltaX, 20 + deltaY);
-  ctx.closePath();
-  ctx.fillStyle = "white";
-  ctx.fill();
-}
 
 // This is a oblong placeholder representing the player element
 function drawPlayer() {
@@ -52,6 +61,7 @@ function drawPlayer() {
   ctx.fillStyle = "green";
   ctx.fill();
 }
+
 // ----------STU-SKETCHPAD------------------------------------------------------
 // FUNCTION TO DESTROY ALIEN (called inside draw alien function?)
 // Takes in coordinates of bullet, and reads position of aliens
@@ -75,14 +85,28 @@ function drawPlayer() {
 // When hit the end, move down by 10%. Then move left by 10% of page per time interval.
 // Repeat until at alien hits a defined point (80% from top?)
 
-// Modified version of drawAlien function which accepts coordinates on each run
 // Initialize alien coord, size of alien, and level on the vertical axis
+
+// Initial position of alien
 let topLeft = 60;
 let level = 20;
 const size = 40;
+let direction = 1;
 
-function modDrawAlien() {
+// Function to end game once alien reaches lower base
+function endGame() {
+  clearInterval(gameBreak)
+};
+
+const drawAlien = () => {
   ctx.clearRect(0, 0, background.width, 500);
+  if (topLeft > 610) {
+    direction = -1;
+    level += 40
+  } else if (topLeft < 30) {
+    direction = 1;
+    level += 40
+  }
   ctx.beginPath();
   ctx.moveTo(topLeft, level);
   ctx.lineTo(topLeft, level + size);
@@ -91,32 +115,39 @@ function modDrawAlien() {
   ctx.closePath();
   ctx.fillStyle = "white";
   ctx.fill();
-  topLeft += 40;
+  topLeft += (40 * direction);
+  if (level > 470) {
+    endGame()
+  }
 }
 
-// setInterval(modDrawAlien, 1000);
 
-// -------------------------------------------------------------------------
-
-drawPlayer();
 
 // ------STU-SKETCHPAD------------------------------------------------------
 
-// function moveLevel() {
-//   if (keepElementInRange(level, 20, 200) < 200) {
-//     setInterval(modDrawAlien, 1000);
-//   } else {
-//     level += 40;
-//     setInterval(modDrawAlien, 1000);
-//   }
-// }
+function moveLevel() {
+  if (topLeft < 200 && direction > 0) {} else if (topLeft > 200) {
+    level += 40;
+    direction = -1;
+  }
+};
 
-// var interval = setInterval(function(){
-//     timesRun += 1;
-//     if(timesRun === 60){
-//         clearInterval(interval);
-//     }
-//     //do whatever here..
-// }, 2000);
+const gameBreak = setInterval(drawAlien, 100);
 
-// moveLevel();
+// setInterval(drawAlien, 100)
+
+function drawBullet(x, y) {
+
+  ctx.clearRect(0, 0, background.width, 500); // Clear rectangle (Coordinates top left, bottom right)
+  ctx.beginPath();
+  ctx.moveTo(x, x + deltaZ); // Corner A  301:601
+  ctx.lineTo(x, y + deltaZ); // Corner B  301:610
+  ctx.lineTo(y, y + deltaZ); // Corner C  310:610
+  ctx.lineTo(y, x + deltaZ); // Corner D  310:601
+  ctx.closePath();
+  ctx.fillStyle = "red";
+  ctx.fill();
+  deltaZ += -10
+}
+
+drawPlayer();
