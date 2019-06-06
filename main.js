@@ -6,7 +6,7 @@ window.addEventListener("keydown", movePlayer, false);
 // Used to define initial offset of player
 let deltaX = 0;
 let deltaY = 0;
-let deltaZ = 200;
+let deltaZ = 500;
 
 // Describes if a player bullet is already on screen
 let onScreen = false;
@@ -40,14 +40,13 @@ function movePlayer(k) {
         setTimeout(() => {
           clearInterval(stopBullet);
           onScreen = false;
-          deltaZ = 200;
+          deltaZ = 500;
         }, 5000)
       } else {}
   }
   k.preventDefault();
   drawPlayer();
 }
-
 
 // This is a oblong placeholder representing the player element
 function drawPlayer() {
@@ -99,7 +98,9 @@ function endGame() {
 };
 
 const drawAlien = () => {
-  ctx.clearRect(0, 0, background.width, 500);
+  ctx.clearRect(topLeft - size, level, topLeft + size, level + size);
+  console.log(level);
+  console.log('break');
   if (topLeft > 610) {
     direction = -1;
     level += 40
@@ -121,16 +122,7 @@ const drawAlien = () => {
   }
 }
 
-
-
 // ------STU-SKETCHPAD------------------------------------------------------
-
-function moveLevel() {
-  if (topLeft < 200 && direction > 0) {} else if (topLeft > 200) {
-    level += 40;
-    direction = -1;
-  }
-};
 
 const gameBreak = setInterval(drawAlien, 100);
 
@@ -140,10 +132,10 @@ function drawBullet(x, y) {
 
   ctx.clearRect(0, 0, background.width, 500); // Clear rectangle (Coordinates top left, bottom right)
   ctx.beginPath();
-  ctx.moveTo(x, x + deltaZ); // Corner A  301:601
-  ctx.lineTo(x, y + deltaZ); // Corner B  301:610
-  ctx.lineTo(y, y + deltaZ); // Corner C  310:610
-  ctx.lineTo(y, x + deltaZ); // Corner D  310:601
+  ctx.moveTo(x + 350, x + deltaZ); // Corner A  301:601
+  ctx.lineTo(x + 350, y + deltaZ); // Corner B  301:610
+  ctx.lineTo(y + 350, y + deltaZ); // Corner C  310:610
+  ctx.lineTo(y + 350, x + deltaZ); // Corner D  310:601
   ctx.closePath();
   ctx.fillStyle = "red";
   ctx.fill();
