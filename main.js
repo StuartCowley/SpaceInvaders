@@ -3,13 +3,50 @@ var ctx = background.getContext("2d");
 
 window.addEventListener("keydown", movePlayer, false);
 
+// -------------------Ellies Alerts!-------------------
+
+alert("Space Invaders!")
+alert("\n Rules: \n1. Press enter to shoot \n2. Kill the aliens \n3. Don't get hit! \n Press Ok to start game.")
+// alert("Winner!")
+
+//............Ellies attempt at 1 life OVER!!...................
+
+let lives = 1;
+document.getElementById("lifeLeft").innerHTML = lives;
+
+// Function to end game once alien reaches lower base
+function endGame() {
+  document.getElementById("lifeLeft").innerHTML = lives - 1
+  alert("Alien invasion complete, you lose!", window.location.reload())
+};
+
+
 // Used to define initial offset of player
 let deltaX = 0;
 let deltaY = 0;
 let deltaZ = 500;
+let bulletPos = [];
+
+// Initialise array to define coordinates of ship bottom at any one time
+let shipBottom = {
+  xLeft: 0,
+  yLeft: 0,
+  xRight: 0,
+  yRight: 0
+}
+
+// Initialise array to define bullet location at any one time
+let bulletLocation = {
+  xPos: 0,
+  yPos: 0
+};
 
 // Describes if a player bullet is already on screen
 let onScreen = false;
+
+// Boolean to exit game if alien destroyed 
+let lost = false;
+let won = false;
 
 // Function to set boundaries, prevents elements from moving out of min and max range
 const keepElementInRange = (v, min, max) => {
@@ -18,8 +55,24 @@ const keepElementInRange = (v, min, max) => {
 
 // Fire player bullet
 const fire = () => {
-  drawBullet(5, 7);
+  drawBullet(-5, 5);
 }
+
+const killAlien = () => {
+  // console.log(shipBottom.xLeft);
+  // console.log(bulletLocation.yPos);
+  // console.log('break');
+  if (
+    (shipBottom.xLeft < bulletLocation.xPos) &&
+    (shipBottom.xRight > bulletLocation.xPos) &&
+    (bulletLocation.yPos < shipBottom.yLeft) &&
+    (shipBottom.yleft >= bulletLocation.yPos) &&
+    (shipBottom.yleft - 120 <= bulletLocation.yPos)
+  ) {
+    console.log('winner!')
+  } else {}
+}
+
 
 // Key listener
 function movePlayer(k) {
@@ -35,12 +88,16 @@ function movePlayer(k) {
     case 32:
       //space bar pressed
       if (onScreen == false) {
+        bulletPos.push(deltaX);
+        bulletLocation.xPos = deltaX + 350;
         onScreen = true;
         let stopBullet = setInterval(fire, 10);
         setTimeout(() => {
           clearInterval(stopBullet);
           onScreen = false;
           deltaZ = 500;
+          bulletPos.pop()
+          bulletLocation.yPos = 0;
         }, 2600)
       } else {}
   }
@@ -61,31 +118,6 @@ function drawPlayer() {
   ctx.fill();
 }
 
-// ----------STU-SKETCHPAD------------------------------------------------------
-// FUNCTION TO DESTROY ALIEN (called inside draw alien function?)
-// Takes in coordinates of bullet, and reads position of aliens
-// bulletPos = (X, Y)
-// alienPos = (leftSide, bottom, rightSide)
-
-// function killAlien(bulletPos, alienPos) {
-//   if (
-//     alienPos.left <= bulletPos.X &&
-//     bulletPos.X <= alienPos.right &&
-//     bulletPos.Y == alienPos.bottom
-//   ) {
-//     // kill alien
-//   }
-// }
-// ----------------------------------------------------------------------------
-
-// ----------STU-SKETCHPAD------------------------------------------------------
-// MOVEMENT PATTERN FOR SINGLE ALIEN:
-// Start position at top left, move right by 10% of page per time interval.
-// When hit the end, move down by 10%. Then move left by 10% of page per time interval.
-// Repeat until at alien hits a defined point (80% from top?)
-
-// Initialize alien coord, size of alien, and level on the vertical axis
-
 // Initial position of alien
 let topLeft = 60;
 let level = 20;
@@ -95,12 +127,16 @@ let direction = 1;
 // Function to end game once alien reaches lower base
 function endGame() {
   clearInterval(gameBreak)
+  lost = true;
   alert("Alien invasion complete, you lose!")
 };
 
 const drawAlien = () => {
   ctx.clearRect(topLeft - (size * direction), level, 40, 40);
-  console.log(level);
+  shipBottom.xLeft = topLeft;
+  shipBottom.yLeft = level + size;
+  shipBottom.xRight = topLeft + size;
+  shipBottom.yRight = level + size;
   if (topLeft > 610) {
     direction = -1;
     level += 40
@@ -117,27 +153,29 @@ const drawAlien = () => {
   ctx.fillStyle = "white";
   ctx.fill();
   topLeft += (40 * direction);
+  killAlien()
   if (level > 470) {
     endGame()
   }
-}
 
-// ------STU-SKETCHPAD------------------------------------------------------
+}
 
 const gameBreak = setInterval(drawAlien, 200);
 
 function drawBullet(x, y) {
 
-  ctx.clearRect(350, deltaZ, 20, 20); // Clear rectangle (Coordinates top left, bottom right)
+  ctx.clearRect(350 + bulletPos[0] - 5, deltaZ, 20, 20); // Clear rectangle (Coordinates top left, bottom right)
   ctx.beginPath();
-  ctx.moveTo(x + 350, x + deltaZ); // Corner A  301:601
-  ctx.lineTo(x + 350, y + deltaZ); // Corner B  301:610
-  ctx.lineTo(y + 350, y + deltaZ); // Corner C  310:610
-  ctx.lineTo(y + 350, x + deltaZ); // Corner D  310:601
+  ctx.moveTo(x + 350 + bulletPos[0], x + deltaZ); // Top left corner of bullet
+  ctx.lineTo(x + 350 + bulletPos[0], y + deltaZ); // Bottom left corner of bullet
+  ctx.lineTo(y + 350 + bulletPos[0], y + deltaZ); // Bottom right corner of bullet
+  ctx.lineTo(y + 350 + bulletPos[0], x + deltaZ); // Top right corner of bullet
   ctx.closePath();
   ctx.fillStyle = "red";
   ctx.fill();
-  deltaZ += -2
+  deltaZ -= 2;
+  // console.log(deltaZ);
+  bulletLocation.yPos = (deltaZ)
 }
 
 drawPlayer();
