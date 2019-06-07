@@ -38,7 +38,7 @@ let shipBottom = {
 // Initialise array to define bullet location at any one time
 let bulletLocation = {
   xPos: 0,
-  yPos: 0
+  yPos: 500
 };
 
 // Describes if a player bullet is already on screen
@@ -59,20 +59,15 @@ const fire = () => {
 }
 
 const killAlien = () => {
-  // console.log(shipBottom.xLeft);
-  // console.log(bulletLocation.yPos);
-  // console.log('break');
   if (
-    (shipBottom.xLeft < bulletLocation.xPos) &&
-    (shipBottom.xRight > bulletLocation.xPos) &&
-    (bulletLocation.yPos < shipBottom.yLeft) &&
-    (shipBottom.yleft >= bulletLocation.yPos) &&
-    (shipBottom.yleft - 120 <= bulletLocation.yPos)
+    (shipBottom.xLeft <= bulletLocation.xPos) && // is bullet on right of alien left side
+    (shipBottom.xRight >= bulletLocation.xPos) && // is bullet on left of alien right side
+    // (bulletLocation.yPos <= shipBottom.yLeft) && // is bullet above bottom of ship
+    (shipBottom.yLeft - size >= bulletLocation.yPos) // is bullet below top of ship
   ) {
     console.log('winner!')
   } else {}
 }
-
 
 // Key listener
 function movePlayer(k) {
@@ -97,7 +92,7 @@ function movePlayer(k) {
           onScreen = false;
           deltaZ = 500;
           bulletPos.pop()
-          bulletLocation.yPos = 0;
+          bulletLocation.yPos = 500;
         }, 2600)
       } else {}
   }
@@ -153,14 +148,13 @@ const drawAlien = () => {
   ctx.fillStyle = "white";
   ctx.fill();
   topLeft += (40 * direction);
-  killAlien()
   if (level > 470) {
     endGame()
   }
 
 }
 
-const gameBreak = setInterval(drawAlien, 200);
+const gameBreak = setInterval(drawAlien, 600);
 
 function drawBullet(x, y) {
 
@@ -175,7 +169,9 @@ function drawBullet(x, y) {
   ctx.fill();
   deltaZ -= 2;
   // console.log(deltaZ);
-  bulletLocation.yPos = (deltaZ)
+  bulletLocation.yPos = (deltaZ);
+  // console.log(bulletLocation.yPos);
+  killAlien()
 }
 
 drawPlayer();
