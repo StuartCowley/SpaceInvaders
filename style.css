@@ -1,29 +1,86 @@
+/* //first things first...
+//have a design idea, how will it look...green white and black, maybe purple
+//what fonts
+//flex box... divvy the screen up into rectangles
+//position of the canvas
+//loading bar? */
+
+@font-face {
+    font-family: 'Lines';
+    src: url("2-Lines.otf"); 
+}
+
+* {
+    font-family: 'Lines';
+    
+}
+
+#score, #lives {
+    font-size: 50px;
+}
+
+#lifeLeft {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 50px;
+}
+
+h1 {  
+    margin: 0;
+    padding-top: 2%;
+    padding-bottom: 5%;
+    font-size: 10vh;
+    color: red;
+    top:10%;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5%;
+    background-color: blue;
+    flex-direction: column;
 }
 
 canvas {
+    display: flex;
+    flex: center;
+    flex-shrink: 1;
+    flex-direction: row;
     width: 700px;
     height: 700px;
     border: solid;
-    background: black;
+    background-color: black;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 
-<<<<<<< HEAD
-
-
-
-
-
-.ryan{
-
-    background-attachment: fixed;
-
-=======
-.thing {
-    width: 20px
->>>>>>> 3b14bcc1f7a249c89a1a958ab86beb75b16b4df4
+#gameBoard {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
+
+#middleRow {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* 
+@keyframes {
+    from {top: 0px;}
+    to {top: 200px;}
+} */
+
+/* The alert message box */
+.alert {
+    padding: 20px;
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-bottom: 15px;
+  }
