@@ -36,12 +36,12 @@ function movePlayer(k) {
       //space bar pressed
       if (onScreen == false) {
         onScreen = true;
-        let stopBullet = setInterval(fire, 200);
+        let stopBullet = setInterval(fire, 10);
         setTimeout(() => {
           clearInterval(stopBullet);
           onScreen = false;
           deltaZ = 500;
-        }, 5000)
+        }, 2600)
       } else {}
   }
   k.preventDefault();
@@ -50,13 +50,13 @@ function movePlayer(k) {
 
 // This is a oblong placeholder representing the player element
 function drawPlayer() {
-  ctx.clearRect(0, 500, background.width, background.height);
+  ctx.clearRect(40 + deltaX, 540, background.width, 60);
   ctx.beginPath();
   deltaX = keepElementInRange(deltaX, -270, 270);
-  ctx.moveTo(310 + deltaX, 600 + deltaY);
-  ctx.lineTo(390 + deltaX, 600 + deltaY);
-  ctx.lineTo(390 + deltaX, 540 + deltaY);
-  ctx.lineTo(310 + deltaX, 540 + deltaY);
+  ctx.moveTo(310 + deltaX, 600);
+  ctx.lineTo(390 + deltaX, 600);
+  ctx.lineTo(390 + deltaX, 540);
+  ctx.lineTo(310 + deltaX, 540);
   ctx.fillStyle = "green";
   ctx.fill();
 }
@@ -95,16 +95,16 @@ let direction = 1;
 // Function to end game once alien reaches lower base
 function endGame() {
   clearInterval(gameBreak)
+  alert("Alien invasion complete, you lose!")
 };
 
 const drawAlien = () => {
-  ctx.clearRect(topLeft - size, level, topLeft + size, level + size);
+  ctx.clearRect(topLeft - (size * direction), level, 40, 40);
   console.log(level);
-  console.log('break');
   if (topLeft > 610) {
     direction = -1;
     level += 40
-  } else if (topLeft < 30) {
+  } else if (topLeft < 60) {
     direction = 1;
     level += 40
   }
@@ -124,13 +124,11 @@ const drawAlien = () => {
 
 // ------STU-SKETCHPAD------------------------------------------------------
 
-const gameBreak = setInterval(drawAlien, 100);
-
-// setInterval(drawAlien, 100)
+const gameBreak = setInterval(drawAlien, 200);
 
 function drawBullet(x, y) {
 
-  ctx.clearRect(0, 0, background.width, 500); // Clear rectangle (Coordinates top left, bottom right)
+  ctx.clearRect(350, deltaZ, 20, 20); // Clear rectangle (Coordinates top left, bottom right)
   ctx.beginPath();
   ctx.moveTo(x + 350, x + deltaZ); // Corner A  301:601
   ctx.lineTo(x + 350, y + deltaZ); // Corner B  301:610
@@ -139,7 +137,7 @@ function drawBullet(x, y) {
   ctx.closePath();
   ctx.fillStyle = "red";
   ctx.fill();
-  deltaZ += -10
+  deltaZ += -2
 }
 
 drawPlayer();
