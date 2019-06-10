@@ -1,30 +1,34 @@
 const background = document.getElementById("gameBoard");
 var ctx = background.getContext("2d");
 
-window.addEventListener("keydown", movePlayer, false);
-
 // -------------------Ellies Alerts!-------------------
 
-alert("Space Invaders!")
-alert("\n Rules: \n1. Press enter to shoot \n2. Kill the aliens \n3. Don't get hit! \n Press Ok to start game.")
-// alert("Winner!")
+alert("Space Invaders!");
+alert(
+  "\n Rules: \n1. Press space to shoot \n2. Kill the aliens \n3. Don't get hit! \n Press Ok to start game."
+);
 
 //............Ellies attempt at 1 life OVER!!...................
 
 let lives = 1;
 document.getElementById("lifeLeft").innerHTML = lives;
 
-// Function to end game once alien reaches lower base
+// Function to end game once alien reaches lower base or alien is destroyed
 function endGame() {
-  document.getElementById("lifeLeft").innerHTML = lives - 1
-  alert("Alien invasion complete, you lose!", window.location.reload())
-};
-
+  if (won == true) {
+    alert("Fleet destroyed, you win!");
+  } else if (aliensReachBottom == true) {
+    clearInterval(gameBreak);
+    lost = true;
+    document.getElementById("lifeLeft").innerHTML = lives - 1;
+    alert("Alien invasion complete, you lose!");
+  }
+}
 
 // Used to define initial offset of player
 let deltaX = 0;
 let deltaY = 0;
-let deltaZ = 500;
+let deltaZ = 600;
 let bulletPos = [];
 
 // Initialise array to define coordinates of ship bottom at any one time
@@ -33,7 +37,7 @@ let shipBottom = {
   yLeft: 0,
   xRight: 0,
   yRight: 0
-}
+};
 
 // Initialise array to define bullet location at any one time
 let bulletLocation = {
@@ -41,10 +45,16 @@ let bulletLocation = {
   yPos: 500
 };
 
+// Variable to check if aliens are at bottom of screen
+let aliensReachBottom = false;
+
 // Describes if a player bullet is already on screen
 let onScreen = false;
 
-// Boolean to exit game if alien destroyed 
+// Storage array for key pressed
+let keys = {};
+
+// Boolean to exit game if alien destroyed
 let lost = false;
 let won = false;
 
@@ -56,108 +66,114 @@ const keepElementInRange = (v, min, max) => {
 // Fire player bullet
 const fire = () => {
   drawBullet(-5, 5);
-}
+};
 
 const killAlien = () => {
   if (
-    (shipBottom.xLeft <= bulletLocation.xPos) && // is bullet on right of alien left side
-    (shipBottom.xRight >= bulletLocation.xPos) && // is bullet on left of alien right side
-    // (bulletLocation.yPos <= shipBottom.yLeft) && // is bullet above bottom of ship
-    (shipBottom.yLeft - size >= bulletLocation.yPos) // is bullet below top of ship
+    shipBottom.xLeft <= bulletLocation.xPos && // is bullet on right of alien left side
+    shipBottom.xRight >= bulletLocation.xPos && // is bullet on left of alien right side
+    bulletLocation.yPos <= shipBottom.yLeft && // is bullet above bottom of ship
+    shipBottom.yLeft - size <= bulletLocation.yPos // is bullet below top of ship
   ) {
-    console.log('winner!')
-  } else {}
-}
-
-// Key listener
-function movePlayer(k) {
-  switch (k.keyCode) {
-    case 37:
-      // left key pressed
-      deltaX -= 10;
-      break;
-    case 39:
-      // right key pressed
-      deltaX += 10;
-      break;
-    case 32:
-      //space bar pressed
-      if (onScreen == false) {
-        bulletPos.push(deltaX);
-        bulletLocation.xPos = deltaX + 350;
-        onScreen = true;
-        let stopBullet = setInterval(fire, 10);
-        setTimeout(() => {
-          clearInterval(stopBullet);
-          onScreen = false;
-          deltaZ = 500;
-          bulletPos.pop()
-          bulletLocation.yPos = 500;
-        }, 2600)
-      } else {}
+    console.log("hit");
+    // won = true;
+    // alert("You defeated the fleet!")
+  } else {
   }
-  k.preventDefault();
+};
+
+window.addEventListener("keydown", function(e) {
+  keys[e.keyCode] = true;
+  e.preventDefault();
+});
+window.addEventListener("keyup", function(e) {
+  delete keys[e.keyCode];
+});
+
+window.addEventListener("keydown", function(e) {
+  if (e.keyCode == 32) {
+    if (onScreen == false) {
+      bulletPos.push(deltaX);
+      bulletLocation.xPos = deltaX + 350;
+      onScreen = true;
+      let stopBullet = setInterval(fire, 5);
+      setTimeout(() => {
+        clearInterval(stopBullet);
+        onScreen = false;
+        deltaZ = 600;
+        bulletPos.pop();
+        bulletLocation.yPos = 500;
+      }, 1550);
+    } else {
+    }
+  }
+  e.preventDefault();
+});
+
+// Key listener for player movement
+function movePlayer() {
+  if (37 in keys) {
+    deltaX -= 10;
+  } else if (39 in keys) {
+    deltaX += 10;
+  }
   drawPlayer();
 }
 
 // This is a oblong placeholder representing the player element
 function drawPlayer() {
-  ctx.clearRect(40 + deltaX, 540, background.width, 60);
+  const playerPic = new Image();
+  playerPic.src = "./img/Laser_Cannon.png";
+  ctx.clearRect(40 + deltaX, 600, background.width, 60);
   ctx.beginPath();
   deltaX = keepElementInRange(deltaX, -270, 270);
-  ctx.moveTo(310 + deltaX, 600);
-  ctx.lineTo(390 + deltaX, 600);
-  ctx.lineTo(390 + deltaX, 540);
-  ctx.lineTo(310 + deltaX, 540);
-  ctx.fillStyle = "green";
-  ctx.fill();
+  ctx.drawImage(playerPic, 310 + deltaX, 600, 80, 60);
+  // ctx.moveTo(310 + deltaX, 600);
+  // ctx.lineTo(390 + deltaX, 600);
+  // ctx.lineTo(390 + deltaX, 540);
+  // ctx.lineTo(310 + deltaX, 540);
+  // ctx.fillStyle = "green";
+  // ctx.fill();
 }
 
 // Initial position of alien
-let topLeft = 60;
+let topLeft = 0;
 let level = 20;
-const size = 40;
+const size = 60;
 let direction = 1;
 
-// Function to end game once alien reaches lower base
-function endGame() {
-  clearInterval(gameBreak)
-  lost = true;
-  alert("Alien invasion complete, you lose!")
-};
-
 const drawAlien = () => {
-  ctx.clearRect(topLeft - (size * direction), level, 40, 40);
+  const alienPic1 = new Image();
+  alienPic1.src = "./img/invaderPink.png";
+  ctx.clearRect(topLeft - size * direction, level, size, size);
   shipBottom.xLeft = topLeft;
   shipBottom.yLeft = level + size;
   shipBottom.xRight = topLeft + size;
   shipBottom.yRight = level + size;
-  if (topLeft > 610) {
+  if (topLeft > 590) {
     direction = -1;
-    level += 40
+    level += 40;
   } else if (topLeft < 60) {
     direction = 1;
-    level += 40
+    level += 40;
   }
   ctx.beginPath();
-  ctx.moveTo(topLeft, level);
-  ctx.lineTo(topLeft, level + size);
-  ctx.lineTo(topLeft + size, level + size);
-  ctx.lineTo(topLeft + size, level);
-  ctx.closePath();
-  ctx.fillStyle = "white";
-  ctx.fill();
-  topLeft += (40 * direction);
+  ctx.drawImage(alienPic1, topLeft, level, size, size);
+  // ctx.moveTo(topLeft, level);
+  // ctx.lineTo(topLeft, level + size);
+  // ctx.lineTo(topLeft + size, level + size);
+  // ctx.lineTo(topLeft + size, level);
+  // ctx.closePath();
+  // ctx.fillStyle = "white";
+  // ctx.fill();
+  topLeft += size * direction;
   if (level > 470) {
-    endGame()
+    aliensReachBottom = true;
+    endGame();
   }
-
-}
-
-const gameBreak = setInterval(drawAlien, 600);
+};
 
 function drawBullet(x, y) {
-
   ctx.clearRect(350 + bulletPos[0] - 5, deltaZ, 20, 20); // Clear rectangle (Coordinates top left, bottom right)
   ctx.beginPath();
   ctx.moveTo(x + 350 + bulletPos[0], x + deltaZ); // Top left corner of bullet
@@ -168,10 +184,17 @@ function drawBullet(x, y) {
   ctx.fillStyle = "red";
   ctx.fill();
   deltaZ -= 2;
-  // console.log(deltaZ);
-  bulletLocation.yPos = (deltaZ);
-  // console.log(bulletLocation.yPos);
-  killAlien()
+  bulletLocation.yPos = deltaZ;
+  killAlien();
 }
 
-drawPlayer();
+// To smooth out animation for player movement
+function loop() {
+  movePlayer();
+  drawPlayer();
+  endGame();
+  window.requestAnimationFrame(loop);
+}
+
+const gameBreak = setInterval(drawAlien, 300); // was 600
+loop();
