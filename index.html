@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +8,29 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Space Invaders!</title>
 </head>
+
 <body>
-    
-<div id="header">
-    <h1>Space Invaders</h1>
-</div>
 
-<div id="middleRow">
-        <div id="score">
-                <p>Score: </p>
-            </div>
-    <canvas id="gameBoard" width="700" height="800"></canvas>
-    <div id="lives">
-            <p>Lives: </p>
+    <div id="header">
+        <h1>Space Invaders</h1>
     </div>
-    <div id="lifeLeft"></div>
 
-</div>
+    <div id="middleRow">
+        <div id="score">
+            <h3>Score</h3>
+            <p>0</p>
+        </div>
+        <canvas id="gameBoard" width="700" height="800"></canvas>
+        <div id="lives">
+            <h3>Lives</h3>
+            <p>1</p>
+        </div>
+        <div id="lifeLeft"></div>
 
-<script src="main.js"></script>
+    </div>
+
+    <script type="module" src="main.js"></script>
 
 </body>
+
 </html>
